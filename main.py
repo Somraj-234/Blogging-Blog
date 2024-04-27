@@ -288,8 +288,6 @@ def about():
 
 MAIL_ADDRESS = os.environ.get("EMAIL_KEY")
 MAIL_APP_PW = os.environ.get("PASSWORD_KEY")
-# MAIL_ADDRESS = "jessepinkmantestingcode@gmail.com"
-# MAIL_APP_PW = "emntaixhnwgsztax"
 
 
 @app.route("/contact", methods=["GET", "POST"])
