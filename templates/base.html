@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blogging Blog - See our thoughts, stories and ideas.</title>
+  <meta name="title" content="Blogging Blog - See our thoughts, stories and ideas.">
+  <meta name="description" content="This is a blog html template adapted for Blogging Blog.">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif !important;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 min-h-screen flex flex-col">
+  <!-- HEADER -->
+  <header class="w-full border-b border-gray-200 bg-white/80 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-4">
+      <a href="/" class="flex items-center gap-2">
+        <span class="font-bold text-2xl text-gray-900 tracking-tight">Blogging Blog</span>
+      </a>
+      <nav>
+        <ul class="flex gap-6 text-base font-medium">
+          {% if current_user.is_authenticated and current_user.id == 1 %}
+            <li><a href="/new-post" class="text-blue-600 hover:underline underline-offset-4 transition">Create</a></li>
+          {% endif %}
+          <li><a href="{{ url_for('about') }}" class="hover:underline underline-offset-4 transition">About</a></li>
+          <li><a href="{{ url_for('contact') }}" class="hover:underline underline-offset-4 transition">Contact</a></li>
+          {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('logout') }}" class="text-red-600 hover:underline underline-offset-4 transition">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('login') }}" class="hover:underline underline-offset-4 transition">Login</a></li>
+            <li><a href="{{ url_for('register') }}" class="hover:underline underline-offset-4 transition">Register</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 w-full">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full border-t border-gray-200 bg-gray-50 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-10 flex flex-col md:flex-row md:justify-between items-center gap-6">
+      <div class="flex flex-col items-center md:items-start">
+        <a href="/" class="font-bold text-2xl text-gray-900 tracking-tight mb-2">Blogging Blog</a>
+        <p class="text-gray-500 text-base">Share your thoughts, stories and ideas.</p>
+      </div>
+      <div class="text-gray-400 text-sm mt-4 md:mt-0">
+        &copy; Blogging Blog 2025.
+      </div>
+    </div>
+  </footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html> 

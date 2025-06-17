@@ -1,68 +1,49 @@
-{% from "bootstrap5/form.html" import render_form %} {% block content %}
-{% include "header.html" %}
-
-<!-- Page Header-->
-<header class="masthead" style="background-image: url('{{post.img_url}}')">
-  <div class="container position-relative px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-      <div class="col-md-10 col-lg-8 col-xl-7">
-        <div class="post-heading">
-          <h1>{{ post.title }}</h1>
-          <h2 class="subheading">{{ post.subtitle }}</h2>
-          <span class="meta"
-            >Posted by
-            <a href="#">{{ post.author.name }}</a>
-            on {{ post.date }}
-          </span>
+{% extends "base.html" %}
+{% block content %}
+<div class="flex flex-col items-center min-h-screen bg-transparent py-8 px-4">
+  <div class="w-full max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold mb-2 text-gray-900">{{ post.title }}</h1>
+    <div class="flex flex-wrap gap-4 mb-4">
+      <a href="{{ url_for('user_posts', user_id=post.author.id) }}" class="inline-block bg-gray-100 text-gray-700 rounded-full px-4 py-1 text-base font-medium">By {{ post.author.name }}</a>
+      <span class="inline-block bg-gray-100 text-gray-700 rounded-full px-4 py-1 text-base font-medium">{{ post.date }}</span>
+    </div>
+    <h2 class="text-2xl text-gray-600 mb-6">{{ post.subtitle }}</h2>
+    <img src="{{ post.img_url }}" alt="{{ post.title }}" class="w-full rounded-xl mb-8 object-cover max-h-96" />
+    <div class="prose prose-lg max-w-none mb-8">{{ post.body|safe }}</div>
+    {% if current_user.is_authenticated and current_user.id == 1 %}
+    <a class="inline-block mb-8 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl px-6 py-3 transition" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
+    {% endif %}
+    <div class="mt-8">
+      <h3 class="text-2xl font-semibold mb-4">Comments</h3>
+      {{ ckeditor.load() }}
+      {{ ckeditor.config(name='comment') }}
+      <form method="POST" class="flex flex-col gap-4 mb-8">
+        {{ form.hidden_tag() }}
+        <div class="flex flex-col gap-2">
+          {{ form.comment.label(class_="text-base font-semibold text-gray-700") }}
+          {{ form.comment(class_="rounded-xl border border-gray-300 bg-gray-50 px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full", placeholder="Write a comment...") }}
         </div>
-      </div>
+        <button type="submit" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl py-4 transition">Submit Comment</button>
+      </form>
+      <ul class="space-y-6 mt-6">
+        {% for comment in post.comments %}
+        <li class="flex gap-4 items-start">
+          <img src="{{ comment.comment_author.email | gravatar }}" class="w-12 h-12 rounded-full border border-gray-200" />
+          <div class="flex-1">
+            <div class="bg-gray-100 rounded-xl px-4 py-3">
+              <p class="text-gray-800">{{ comment.text|safe }}</p>
+            </div>
+            <div class="flex items-center gap-2 mt-1 text-sm text-gray-500">
+              <span>{{ comment.comment_author.name }}</span>
+              {% if comment.comment_author.id == current_user.id %}
+              <a href="{{url_for('delete_comment', postid=post.id, comment_id=comment.id) }}" class="text-red-500 hover:underline ml-2">✘</a>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
-</header>
-
-<!-- Post Content -->
-<article>
-  <div class="container px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-      <div class="col-md-10 col-lg-8 col-xl-7">
-        {{ post.body|safe }}
-        <!--TODO: Only show Edit Post button if user id is 1 (admin user) -->
-              {% if current_user.id == 1: %}
-        <div class="d-flex justify-content-end mb-4">
-          <a
-            class="btn btn-primary float-right"
-            href="{{url_for('edit_post', post_id=post.id)}}"
-            >Edit Post</a
-          >
-        </div>
-          {% endif %}
-        <!-- Comments Area -->
-        <!-- TODO: Add a CKEditor for commenting below -->
-        {{ ckeditor.load() }} {{ ckeditor.config(name='comment') }}
-        {{render_form(form, button_map={"submit":"primary"})}}
-        <div class="comment">
-          <!-- TODO: Show all the comments on a post -->
-          {% for comment in post.comments: %}
-          <ul class="commentList">
-            <li>
-              <div class="commenterImage">
-                <img src="{{ 'comment.comment_author.email' | gravatar }}" />
-              </div>
-              <div class="commentText">
-                <p>{{comment.text|safe}}</p>
-                <span class="date sub-text">{{comment.comment_author.name}}</span>
-                  {% if comment.comment_author.id == current_user.id: %}
-                <span><a href="{{url_for('delete_comment', postid=post.id, comment_id=comment.id) }}">✘</a></span>
-                {% endif %}
-              </div>
-            </li>
-          </ul>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-
-{% include "footer.html" %}
+</div>
 {% endblock %}

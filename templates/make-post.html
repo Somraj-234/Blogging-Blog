@@ -1,37 +1,31 @@
-{% from "bootstrap5/form.html" import render_form %} {% block content %}
-{%include "header.html" %}
-
-<!-- Page Header -->
-<header
-  class="masthead"
-  style="background-image: url('../static/assets/img/edit-bg.jpg')"
->
-  <div class="container position-relative px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-      <div class="col-md-10 col-lg-8 col-xl-7">
-        <div class="page-heading">
-          {% if is_edit: %}
-          <h1>Edit Post</h1>
-          {% else: %}
-          <h1>New Post</h1>
-          {% endif %}
-          <span class="subheading"
-            >You're going to make a great blog post!</span
-          >
-        </div>
+{% extends "base.html" %}
+{% block content %}
+<div class="flex min-h-screen items-center justify-center bg-transparent">
+  <div class="w-full max-w-2xl mx-auto px-4 py-8 flex flex-col">
+    <h1 class="text-4xl font-bold mb-2 text-gray-900">{% if is_edit %}Edit Post{% else %}New Post{% endif %}</h1>
+    <p class="text-lg text-gray-500 mb-8">You're going to make a great blog post!</p>
+    <form method="POST" class="flex flex-col gap-6">
+      {{ ckeditor.load() }}
+      {{ ckeditor.config(name='body') }}
+      {{ form.hidden_tag() }}
+      <div class="flex flex-col gap-2">
+        {{ form.title.label(class_="text-base font-semibold text-gray-700") }}
+        {{ form.title(class_="rounded-xl border border-gray-300 bg-gray-50 px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full", placeholder="Post Title") }}
       </div>
-    </div>
-  </div>
-</header>
-
-<main class="mb-4">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto">
-        {{ ckeditor.load() }} {{ ckeditor.config(name='body') }} {{
-        render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+      <div class="flex flex-col gap-2">
+        {{ form.subtitle.label(class_="text-base font-semibold text-gray-700") }}
+        {{ form.subtitle(class_="rounded-xl border border-gray-300 bg-gray-50 px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full", placeholder="Subtitle") }}
       </div>
-    </div>
+      <div class="flex flex-col gap-2">
+        {{ form.img_url.label(class_="text-base font-semibold text-gray-700") }}
+        {{ form.img_url(class_="rounded-xl border border-gray-300 bg-gray-50 px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full", placeholder="Image URL") }}
+      </div>
+      <div class="flex flex-col gap-2">
+        {{ form.body.label(class_="text-base font-semibold text-gray-700") }}
+        {{ form.body(class_="rounded-xl border border-gray-300 bg-gray-50 px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full", placeholder="Write your post...") }}
+      </div>
+      <button type="submit" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl py-4 transition">{% if is_edit %}Update Post{% else %}Create Post{% endif %}</button>
+    </form>
   </div>
-</main>
-{% include "footer.html" %} {% endblock %}
+</div>
+{% endblock %}

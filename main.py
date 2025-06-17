@@ -13,8 +13,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 import smtplib
 import os
+import secrets
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+
+# secret_key = secrets.token_hex(16) 
+# print(secret_key)
+
 app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 ckeditor = CKEditor(app)
 Bootstrap5(app)
@@ -305,6 +313,13 @@ def send_email(name, email, phone, message):
         connection.starttls()
         connection.login(MAIL_ADDRESS, MAIL_APP_PW)
         connection.sendmail(from_addr=email, to_addrs=MAIL_ADDRESS, msg=email_message)
+
+
+@app.route('/user/<int:user_id>')
+def user_posts(user_id):
+    user = db.get_or_404(User, user_id)
+    posts = db.session.execute(db.select(BlogPost).where(BlogPost.author_id == user_id)).scalars().all()
+    return render_template('user_posts.html', user=user, posts=posts, user_logged=current_user.is_authenticated)
 
 
 if __name__ == "__main__":
